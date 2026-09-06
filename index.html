@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Draft Tracker</title>
+    <link rel="stylesheet" href="styles.css?v=5">
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <h1>Draft Tracker</h1>
+          <p id="loadStatus">Loading player values</p>
+        </div>
+        <div class="topbar-actions">
+          <div class="scoring-menu">
+            <button class="menu-button" id="scoringMenuButton" type="button" aria-expanded="false" aria-controls="scoringMenu">
+              <span class="hamburger-lines" aria-hidden="true"></span>
+              <span id="activeScoringLabel">Superflex</span>
+            </button>
+            <div class="menu-panel" id="scoringMenu" hidden></div>
+          </div>
+          <button class="undo-button" id="undoButton" type="button" disabled>Undo</button>
+          <button class="help-button" id="helpButton" type="button" aria-label="Open draft tracker help">?</button>
+          <div class="summary-grid" aria-label="Draft summary">
+            <div class="round-summary">
+              <span id="currentRound">Round 1</span>
+              <label>On Deck</label>
+            </div>
+            <div>
+              <span id="availableCount">0</span>
+              <label>Available</label>
+            </div>
+            <div>
+              <span id="mineCount">0</span>
+              <label>Mine</label>
+            </div>
+            <div>
+              <span id="competitorCount">0</span>
+              <label>Competitor</label>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="controls" aria-label="Player search controls">
+        <label class="search-label" for="searchInput">Search</label>
+        <input id="searchInput" type="search" autocomplete="off" placeholder="bijan_robinson, ja_marr_chase, josh_allen">
+        <div class="filter-row status-filter-row" role="group" aria-label="Status filter">
+          <button class="filter-button" type="button" data-filter="all">All</button>
+          <button class="filter-button is-active" type="button" data-filter="available">Available</button>
+          <button class="filter-button" type="button" data-filter="me">Mine</button>
+          <button class="filter-button" type="button" data-filter="competitor">Competitor</button>
+        </div>
+        <div class="filter-row position-filter-row" role="group" aria-label="Position filter">
+          <button class="filter-button is-active" type="button" data-position-filter="all">All Pos</button>
+          <button class="filter-button" type="button" data-position-filter="QB">QB</button>
+          <button class="filter-button" type="button" data-position-filter="RB">RB</button>
+          <button class="filter-button" type="button" data-position-filter="WR">WR</button>
+          <button class="filter-button" type="button" data-position-filter="TE">TE</button>
+        </div>
+      </section>
+
+      <section class="position-grid" id="positionGrid" aria-label="Live remaining position values"></section>
+
+      <div class="draft-layout">
+        <aside class="roster-sidebar" aria-label="My roster by position">
+          <header>
+            <h2>My Roster</h2>
+            <span id="rosterTotal">0 drafted</span>
+          </header>
+          <div class="roster-list" id="rosterList"></div>
+        </aside>
+
+        <section class="draft-plan" aria-label="Draft plan for selected scoring">
+          <header>
+            <h2 id="draftPlanTitle">Draft Plan</h2>
+            <span id="draftPlanNote"></span>
+          </header>
+          <div class="plan-list" id="draftPlanList"></div>
+        </section>
+
+        <section class="my-draft" aria-label="My draft choices by round">
+          <header>
+            <h2>My Draft</h2>
+            <span id="myDraftTotal">0 picks</span>
+          </header>
+          <div class="my-draft-list" id="myDraftList"></div>
+        </section>
+
+        <section class="board" aria-label="Player board">
+          <div class="board-header">
+            <h2>Players</h2>
+            <span id="resultCount">0 shown</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Player</th>
+                  <th>Pos</th>
+                  <th>Team</th>
+                  <th id="valueHeader">Superflex $</th>
+                  <th>Status</th>
+                  <th>Mark</th>
+                </tr>
+              </thead>
+              <tbody id="playerRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <dialog class="help-dialog" id="helpDialog" aria-labelledby="helpDialogTitle">
+      <div class="help-panel">
+        <header>
+          <h2 id="helpDialogTitle">Draft Tracker Help</h2>
+          <button class="dialog-close-button" id="helpCloseButton" type="button" aria-label="Close help">x</button>
+        </header>
+
+        <section>
+          <h3>Shortcuts</h3>
+          <dl class="shortcut-list">
+            <div>
+              <dt>/</dt>
+              <dd>Focus search</dd>
+            </div>
+            <div>
+              <dt>Enter</dt>
+              <dd>Mark the top shown player as Competitor</dd>
+            </div>
+            <div>
+              <dt>Shift+Enter</dt>
+              <dd>Mark the top shown player as Mine</dd>
+            </div>
+            <div>
+              <dt>Esc</dt>
+              <dd>Close menus or clear search</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section>
+          <h3>Auction Value</h3>
+          <p>
+            Rankings tell you order, but auction value shows distance. The sparkline graphs the remaining auction
+            values at each position so cliffs, flat spots, and replacement-level drops are easier to see while you draft.
+          </p>
+        </section>
+
+        <section>
+          <h3>Color Cues</h3>
+          <ul class="help-list">
+            <li>Green rows are your drafted players.</li>
+            <li>Red rows are players drafted by competitors.</li>
+            <li>Blue rows and blue sparkline dots are handcuffs for players you drafted.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Notes</h3>
+          <p>
+            Filters apply before keyboard shortcuts, so Enter acts on the first player currently shown. Draft state is
+            saved in this browser.
+          </p>
+        </section>
+      </div>
+    </dialog>
+
+    <script src="data-source-config.js?v=1"></script>
+    <script src="draft-plan-config.js?v=1"></script>
+    <script src="app.js?v=11"></script>
+  </body>
+</html>
