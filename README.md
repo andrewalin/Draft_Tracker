@@ -2,6 +2,32 @@
 
 A browser-based fantasy draft tracker built around auction value. It loads a local CSV, tracks drafted players in browser storage, highlights handcuffs, and graphs remaining auction-value cliffs by position.
 
+![Draft Tracker dashboard showing auction-value sparklines, draft plan, roster needs, and player table](assets/hero-dashboard.png)
+
+## Why This Tracker
+
+Most draft trackers center on rank order. Draft Tracker centers on auction value, because auction value shows the size of the gap between players. The position sparklines make cliffs, flat spots, and replacement-level drops easier to spot during a live draft.
+
+![Position cards showing remaining auction-value cliffs by position](assets/auction-value-cliffs.png)
+
+## Fast Live Drafting
+
+The fastest shortcut is optimized for the thing you do most often during a draft: logging another team's pick. Search narrows the table, then `Enter` marks the top shown player as a competitor pick. `Shift+Enter` is reserved for the more deliberate action of marking your own pick.
+
+![GIF showing search and Enter marking a competitor pick](assets/competitor-logging.gif)
+
+## Handcuff Awareness
+
+When you draft a player, available backups on the same team and at the same position are highlighted in blue. That cue appears in the player list, the position top-five list, and the sparkline dot.
+
+![GIF showing a drafted player causing a handcuff to appear in blue](assets/handcuff-highlight.gif)
+
+## Built-In Help
+
+The `?` button shows keyboard shortcuts, the auction-value concept, color cues, and browser-storage behavior without leaving the draft board.
+
+![Help dialog listing shortcuts and color cues](assets/keyboard-shortcuts-help.png)
+
 ## Local Setup
 
 Run the folder through a local static server so the browser can fetch the CSV:
@@ -42,8 +68,6 @@ Some config values are a contract with the CSV. Others are app-facing names you 
 | `sourceLabel` | No | Display text shown after the CSV loads. |
 | `scoringModes[].key` | No | Internal id you choose, but keep it stable because browser settings use it. |
 | `scoringModes[].label` | No | Display text shown in the scoring menu and value column. |
-
-The app's core concept is auction value. Rankings say who comes next, but auction value shows the size of the gap between players. The position sparklines use those values to make cliffs, flat spots, and replacement-level drops easier to spot during a draft.
 
 Example shape:
 
@@ -86,10 +110,49 @@ For a public GitHub repo, include:
 - `draft-plan-config.js`
 - `draft-helpers.js`
 - `data-source-config.template.js`
+- `assets/`
+- `scripts/`
+- `package.json`
+- `package-lock.json`
 - `README.md`
 
 Do not include:
 
 - `data-source-config.js`
 - third-party CSV exports
+- `node_modules/`
 - lock/temp files created by spreadsheet editors
+
+## Screenshot Capture
+
+The screenshot script uses Playwright and synthetic sample data, so generated README images do not expose your private CSV or source-specific config.
+
+Install dependencies once:
+
+```sh
+npm install
+npx playwright install chromium
+sudo apt install ffmpeg
+```
+
+If Chromium reports missing Linux libraries, run this in your own terminal so sudo can prompt for your password:
+
+```sh
+npx playwright install-deps chromium
+```
+
+Then capture screenshots:
+
+```sh
+npm run capture:screenshots
+```
+
+The script writes images to `assets/`:
+
+- `hero-dashboard.png`
+- `auction-value-cliffs.png`
+- `handcuff-highlight.png`
+- `keyboard-shortcuts-help.png`
+- `competitor-logging.gif`
+- `handcuff-highlight.gif`
+- `help-dialog.gif`
